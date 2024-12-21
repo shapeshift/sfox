@@ -2,7 +2,7 @@ import { upgrades, ethers } from "hardhat";
 
 async function main() {
   const stakingToken = "0xc770EEfAd204B5180dF6a14Ee197D99d808ee52d";
-  const tokeToken = "0x2e9d63788249371f1dfc918a52f8d799f4a38c94";
+  const tokenToken = "0x2e9d63788249371f1dfc918a52f8d799f4a38c94";  // Fixed typo here
   const tokePool = "0x808D3E6b23516967ceAE4f17a5F9038383ED5311";
   const tokeManager = "0xa86e412109f77c45a3bc1c5870b880492fb86a14";
   const tokeReward = "0x79dD22579112d8a5F7347c5ED7E609e60da713C5";
@@ -17,32 +17,26 @@ async function main() {
 
   const Staking = await ethers.getContractFactory("Staking");
   const yieldyDeployment = await ethers.getContractFactory("Yieldy");
-  const liquidityReserveDeployment = await ethers.getContractFactory(
-    "LiquidityReserve"
-  );
+  const liquidityReserveDeployment = await ethers.getContractFactory("LiquidityReserve");
 
-  console.info("Deploying Yieldy...");
-  const yieldy = await upgrades.deployProxy(yieldyDeployment, [
-    "Fox Yieldy",
-    "FOXy",
-    18,
-  ]);
+  console.log("Deploying Yieldy...");
+  const yieldy = await upgrades.deployProxy(yieldyDeployment, ["Fox Yieldy", "FOXy", 18]);
   await yieldy.deployed();
-  console.info("Yieldy deployed to:", yieldy.address);
+  console.log("Yieldy deployed to:", yieldy.address);
 
-  console.info("Deploying Liquidity Reserve...");
+  console.log("Deploying Liquidity Reserve...");
   const liquidityReserve = await upgrades.deployProxy(
     liquidityReserveDeployment,
     ["Liquidity Reserve FOX", "lrFOX", stakingToken, yieldy.address]
   );
   await liquidityReserve.deployed();
-  console.info("Liquidity Reserve deployed to:", liquidityReserve.address);
+  console.log("Liquidity Reserve deployed to:", liquidityReserve.address);
 
-  console.info("Deploying Staking...");
+  console.log("Deploying Staking...");
   const staking = await upgrades.deployProxy(Staking, [
     stakingToken,
     yieldy.address,
-    tokeToken,
+    tokenToken,
     tokePool,
     tokeManager,
     tokeReward,
@@ -54,7 +48,7 @@ async function main() {
     totalSupplyLimit,
   ]);
   await staking.deployed();
-  console.info("Staking deployed to:", staking.address);
+  console.log("Staking deployed to:", staking.address);
 
   //  TODO: after deploy
   //  await liquidityReserve.enableLiquidityReserve(staking.address);
